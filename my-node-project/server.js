@@ -37,6 +37,7 @@ app.post('/api/users/signup', async (req, res) => {
         const newUser = new User({ name, email, password });
         await newUser.save();
 
+        fetch
         res.status(201).json({
             message: 'User registered successfully',
             user: { id: newUser._id, name: newUser.name, email: newUser.email }

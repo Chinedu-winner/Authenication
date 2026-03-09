@@ -1,82 +1,63 @@
-import React from 'react';
-import { loginUser, signupUser } from '../services/authService';
+import React, { useState } from "react";
+import { loginUser } from "../services/authService";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
 
-    const [state, setState] = React.useState("login")
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-    const [formData, setFormData] = React.useState({
-        name: '',
-        email: '',
-        password: ''
-    })
+  const handleChange = (e) => {
+    setFormData({
+    ...formData,
+    [e.target.name]: e.target.value,
+    });
+  };
 
-    const [message, setMessage] = React.useState({ type: '', text: '' })
-    const [loading, setLoading] = React.useState(false)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setMessage({ type: '', text: '' })
-        setLoading(true)
+    try {
+    const data = await loginUser(formData);
 
-        try {
-            if (state === "login") {
-                const response = await loginUser(formData.email, formData.password)
-                setMessage({ type: 'success', text: response.data.message || 'Login successful!' })
-                setFormData({ name: '', email: '', password: '' })
-            } else {
-                const response = await signupUser(formData.name, formData.email, formData.password)
-                setMessage({ type: 'success', text: response.data.message || 'Signup successful! Please login.' })
-                setFormData({ name: '', email: '', password: '' })
-                setTimeout(() => setState('login'), 1500);
-            }
-        } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message || 'An error occurred'
-            setMessage({ type: 'error', text: errorMsg })
-        } finally {
-            setLoading(false)
-        }
+    console.log("Login success:", data);
+
+      // store token if backend returns it
+    if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+    navigate("/dashboard");
+    } catch (error) {
+    alert("Login failed. Check your credentials.");
     }
+};
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({ ...prev, [name]: value }))
-    }
+return (
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+    <h2>Login</h2>
 
-    return (
-            <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <form onSubmit={handleSubmit} className="sm:w-[350px] w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white">
-                <h1 className="text-gray-900 text-3xl mt-10 font-medium">{state === "login" ? "Login" : "Sign up"}</h1>
-                <p className="text-gray-500 text-sm mt-2">Please sign in to continue</p>
-                {message.text && (
-                    <div className={`mt-4 p-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-red-100 text-red-700 border border-red-300'}`}>
-                        {message.text}
-                    </div>
-                )}
-                {state !== "login" && (
-                    <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-round-icon lucide-user-round"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></svg>
-                        <input type="text" name="name" placeholder="Name" className="border-none outline-none ring-0" value={formData.name} onChange={handleChange} required />
-                    </div>
-                )}
-                <div className="flex items-center w-full mt-4 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mail-icon lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></svg>
-                    <input type="email" name="email" placeholder="Email id" className="border-none outline-none ring-0" value={formData.email} onChange={handleChange} required />
-                </div>
-                <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lock-icon lucide-lock"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                    <input type="password" name="password" placeholder="Password" className="border-none outline-none ring-0" value={formData.password} onChange={handleChange} required />
-                </div>
-                <div className="mt-4 text-left text-indigo-500">
-                    <button className="text-sm" type="reset">Forget password?</button>
-                </div>
-                <button type="submit" disabled={loading} className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed">
-                    {loading ? "Loading..." : (state === "login" ? "Login" : "Sign up")}
-                </button>
-                <p onClick={() => setState(prev => prev === "login" ? "register" : "login")} className="text-gray-500 text-sm mt-3 mb-11">{state === "login" ? "Don't have an account?" : "Already have an account?"} <a href="#" className="text-indigo-500 hover:underline">click here</a></p>
-            </form>
-            </div>
-    )
-}
+    <form onSubmit={handleSubmit}>
+        <input  type="email"  name="email"  placeholder="Email"  onChange={handleChange}  required/>
+        <br />
+        <br />
 
-export default Login
+        <input type="password" name="password" placeholder="Password" onChange={handleChange} required/>
+
+        <br />
+        <br />
+
+        <button type="submit">Login</button>
+    </form>
+
+    <br />
+
+    <p>Don't have an account? <Link to="/signup">Signup</Link></p>
+    </div>
+);
+};
+
+export default Login;

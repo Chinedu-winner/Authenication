@@ -1,9 +1,23 @@
-import axiosInstance from '../api/axiosInstance';
+import axios from "axios";
 
-export const loginUser = async (email, password) => {
-    return axiosInstance.post('/users/login', { email, password });
+const API = "http://localhost:5000/api/auth"; 
+
+export const loginUser = async (data) => {
+try {
+    const response = await axios.post(`${API}/login`, data);
+    return response.data;
+} catch (error) {
+    console.error("Login error:", error);
+    throw error;
+}
 };
 
-export const signupUser = async (username, email, password) => {
-    return axiosInstance.post('/users/signup', { name: username, email, password });
+export const signupUser = async (data) => {
+try {
+    const response = await axios.post(`${API}/signup`, data);
+    return response.data;
+} catch (error) {
+    console.error("Signup error:", error);
+    throw error;
+}
 };
