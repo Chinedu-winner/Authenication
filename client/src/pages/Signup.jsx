@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import{useNavigate} from "react-router-dom"; 
+import { Link, useNavigate } from 'react-router-dom';
 import { signupUser } from '../services/authService';
+import Login from './Login';
 
 export default function Signup() {
+    const navigate = useNavigate();
     const [formData, setFormData] = React.useState({
         username: '',
         email: '',
@@ -24,8 +25,11 @@ export default function Signup() {
 
         try {
             const response = await signupUser(formData.username, formData.email, formData.password)
-            setMessage({ type: 'success', text: response.data.message || 'Signup successful! Please login.' })
+            setMessage({ type: 'success', text: response.message || 'Signup successful! Redirecting to login...' })
             setFormData({ username: '', email: '', password: '' })
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message || 'An error occurred during signup'
             setMessage({ type: 'error', text: errorMsg })
@@ -47,9 +51,7 @@ export default function Signup() {
             <input name="username" className="w-full border mt-1 bg-indigo-500/5 mb-2 border-gray-500/10 outline-none rounded py-2.5 px-3" type="text" placeholder="Username" value={formData.username} onChange={handleChange} required />
             <input name="email" className="w-full border mt-1 bg-indigo-500/5 mb-2 border-gray-500/10 outline-none rounded py-2.5 px-3" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
             <input name="password" className="w-full border mt-1 bg-indigo-500/5 mb-7 border-gray-500/10 outline-none rounded py-2.5 px-3" type="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-            <link to="/login">
-            <button type="submit" disabled={loading} className="w-full mb-3 bg-indigo-500 hover:bg-indigo-600 transition-all active:scale-95 py-2.5 rounded text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed">Sign in </button>
-            </link>
+            <button type="submit" disabled={loading} className="w-full mb-3 bg-indigo-500 hover:bg-indigo-600 transition-all active:scale-95 py-2.5 rounded text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed" onClick={Login}>Sign Up</button>
 
             <p className="text-center mt-4">
                 Already have an account? <Link to="/login" className="text-blue-500 underline">Log In</Link>
