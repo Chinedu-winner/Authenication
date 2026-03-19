@@ -31,7 +31,8 @@ export default function Signup() {
             }, 2000);
         } catch (error) {
             console.error("Signup Error:", error);
-            let errorMsg = error.response?.data?.message || error.message || 'An error occurred during signup'
+            const serverError = error.response?.data;
+            let errorMsg = (typeof serverError === "string" ? serverError : serverError?.message) || error.message || 'An error occurred during signup';
             if (error.message === "Network Error" || error.message === "Failed to fetch") {
                 errorMsg = "Network Error: Unable to connect to server. Please check if the backend is running.";
             }
@@ -57,17 +58,17 @@ export default function Signup() {
 
             <div className="mb-5">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">Username</label>
-                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="text" id="username" name="username" placeholder="Choose a username" value={formData.username} onChange={handleChange} required />
+                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="text" id="username" name="username" placeholder="Choose a username" value={formData.username} onChange={handleChange} required />
             </div>
 
             <div className="mb-5">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email Address</label>
-                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
+                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
             </div>
 
             <div className="mb-8">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
-                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="password" id="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} required />
+                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="password" id="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} required />
             </div>
 
             <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5 active:scale-95 duration-200 disabled:opacity-60 disabled:cursor-not-allowed">{loading ? 'Signing Up...' : 'Sign Up'}</button>
