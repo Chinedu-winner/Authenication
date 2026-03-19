@@ -41,6 +41,12 @@ export default function Signup() {
             setLoading(false)
         }
     }
+
+    const handleBypass = () => {
+        localStorage.setItem("token", "bypass-token");
+        navigate("/dashboard");
+    };
+
     return (
         <div className='flex justify-center items-center min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600'>
         <form onSubmit={handleSubmit} className="bg-white w-full max-w-md mx-4 p-8 rounded-2xl shadow-2xl transform transition-all">
@@ -66,12 +72,14 @@ export default function Signup() {
                 <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
             </div>
 
-            <div className="mb-8">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
-                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="password" id="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} required />
-            </div>
-
+        <div className="mb-8 relative">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
+            <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring focus:ring-blue-200 outline-none transition-all duration-200" type={showPassword ? "text" : "password"} id="password" name="password" placeholder="Enter your password" onChange={handleChange} value={formData.password} required/>
+            <button type="button" onClick={togglePassword} className="absolute right-3 top-10 text-gray-600">{showPassword ? "🙈" : "👁"}</button>
+        </div>
             <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5 active:scale-95 duration-200 disabled:opacity-60 disabled:cursor-not-allowed">{loading ? 'Signing Up...' : 'Sign Up'}</button>
+
+            <button type="button" onClick={handleBypass} className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg shadow transform transition hover:-translate-y-0.5 active:scale-95 duration-200">Guest Access (Dev Bypass)</button>
 
             <p className="text-center mt-6 text-gray-600 text-sm">Already have an account? <Link to="/login" className="text-blue-600 hover:text-blue-800 font-bold hover:underline">Log In</Link></p>
         </form>

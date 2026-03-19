@@ -9,6 +9,11 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,9 +37,8 @@ const Login = () => {
       if (err.message === "Network Error" || err.message === "Failed to fetch") {
         setError("Network Error: Unable to connect to server. Please check if the backend is running.");
       } else {
-        // Handle cases where the server sends a string response instead of a JSON object
         const serverError = err.response?.data;
-        setError((typeof serverError === "string" ? serverError : serverError?.message) || err.message || "An error occurred during login");
+        setError((typeof serverError === "string" ? serverError : (serverError?.message || serverError?.error)) || err.message || "An error occurred during login");
       }
     }
   };
@@ -57,22 +61,20 @@ const Login = () => {
         )}
 
         <div className="mb-5">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-            Email Address
-          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email Address</label>
           <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="email" id="email" name="email" placeholder="Enter your email" onChange={handleChange} value={formData.email} required />
         </div>
 
-        <div className="mb-8">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
-          <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="password" id="password" name="password" placeholder="Enter your password" onChange={handleChange} value={formData.password} required />
-        </div>
+    <div className="mb-8 relative">
+  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
+
+  <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:border-blue-500 focus:bg-white focus:ring focus:ring-blue-200 outline-none transition-all duration-200" type={showPassword ? "text" : "password"} id="password" name="password" placeholder="Enter your password" onChange={handleChange} value={formData.password} required/>
+  <button type="button" onClick={togglePassword} className="absolute right-3 top-10 text-gray-600">{showPassword ? "🙈" : "👁"}</button>
+</div>
 
         <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5 active:scale-95 duration-200">Login</button>
 
-        <button type="button" onClick={handleBypass} className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg shadow transform transition hover:-translate-y-0.5 active:scale-95 duration-200">
-          Guest Access (Dev Bypass)
-        </button>
+        <button type="button" onClick={handleBypass} className="w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg shadow transform transition hover:-translate-y-0.5 active:scale-95 duration-200">Guest Access (Dev Bypass)</button>
 
         <p className="text-center mt-6 text-gray-600 text-sm">Don't have an account? <Link to="/signup" className="text-blue-600 hover:text-blue-800 font-bold hover:underline">Signup</Link></p>
       </form> 
