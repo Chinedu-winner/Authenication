@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser } from '../services/authService';
-import Login from './Login';
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -31,31 +30,49 @@ export default function Signup() {
                 navigate('/login');
             }, 2000);
         } catch (error) {
-            const errorMsg = error.response?.data?.message || error.message || 'An error occurred during signup'
+            console.error("Signup Error:", error);
+            let errorMsg = error.response?.data?.message || error.message || 'An error occurred during signup'
+            if (error.message === "Network Error" || error.message === "Failed to fetch") {
+                errorMsg = "Network Error: Unable to connect to server. Please check if the backend is running.";
+            }
             setMessage({ type: 'error', text: errorMsg })
         } finally {
             setLoading(false)
         }
     }
     return (
-        <div className='flex justify-center items-center min-h-screen bg-gray-100'>
-        <form onSubmit={handleSubmit} className="bg-white text-gray-500 w-full max-w-[340px] mx-4 md:p-6 p-4 py-8 text-left text-sm rounded-lg shadow-[0px_0px_10px_0px] shadow-pink/10">
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Sign Up</h2>
+        <div className='flex justify-center items-center min-h-screen bg-gradient-to-br from-cyan-500 to-blue-600'>
+        <form onSubmit={handleSubmit} className="bg-white w-full max-w-md mx-4 p-8 rounded-2xl shadow-2xl transform transition-all">
+            <h2 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Create Account</h2>
 
             {message.text && (
-                <div className={`mb-4 p-3 rounded-lg text-sm font-medium ${message.type === 'success' ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-red-100 text-red-700 border border-red-300'}`}>
-                    {message.text}
+                <div className={`mb-6 p-4 rounded-lg border-l-4 text-sm ${message.type === 'success'
+                        ? 'bg-green-50 border-green-500 text-green-700'
+                        : 'bg-red-50 border-red-500 text-red-700'
+                }`}>
+                    <p className="font-bold">{message.type === 'success' ? 'Success' : 'Error'}</p>
+                    <p>{message.text}</p>
                 </div>
             )}
 
-            <input name="username" className="w-full border mt-1 bg-indigo-500/5 mb-2 border-gray-500/10 outline-none rounded py-2.5 px-3" type="text" placeholder="Username" value={formData.username} onChange={handleChange} required />
-            <input name="email" className="w-full border mt-1 bg-indigo-500/5 mb-2 border-gray-500/10 outline-none rounded py-2.5 px-3" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-            <input name="password" className="w-full border mt-1 bg-indigo-500/5 mb-7 border-gray-500/10 outline-none rounded py-2.5 px-3" type="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-            <button type="submit" disabled={loading} className="w-full mb-3 bg-indigo-500 hover:bg-indigo-600 transition-all active:scale-95 py-2.5 rounded text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed" onClick={Login}>Sign Up</button>
+            <div className="mb-5">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">Username</label>
+                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="text" id="username" name="username" placeholder="Choose a username" value={formData.username} onChange={handleChange} required />
+            </div>
 
-            <p className="text-center mt-4">
-                Already have an account? <Link to="/login" className="text-blue-500 underline">Log In</Link>
-            </p>
+            <div className="mb-5">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email Address</label>
+                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="email" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
+            </div>
+
+            <div className="mb-8">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
+                <input className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200" type="password" id="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} required />
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transform transition hover:-translate-y-0.5 active:scale-95 duration-200 disabled:opacity-60 disabled:cursor-not-allowed">{loading ? 'Signing Up...' : 'Sign Up'}</button>
+
+            <p className="text-center mt-6 text-gray-600 text-sm">Already have an account? <Link to="/login" className="text-blue-600 hover:text-blue-800 font-bold hover:underline">Log In</Link></p>
         </form>
         </div>
     );
